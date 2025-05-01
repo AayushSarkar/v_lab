@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="color: #003366; font-weight: bold;">Young’s Double Slit Experiment</h2>
+
+
+    <!-- Bootstrap Tabs for Navigation -->
+    <ul class="nav nav-pills justify-content-center mb-4" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="aim-tab" data-toggle="tab" href="#aim" role="tab" aria-controls="aim" aria-selected="true">Aim</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="theory-tab" data-toggle="tab" href="#theory" role="tab" aria-controls="theory" aria-selected="false">Theory</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="procedure-tab" data-toggle="tab" href="#procedure" role="tab" aria-controls="procedure" aria-selected="false">Procedure</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="simulation-tab" data-toggle="tab" href="#simulation" role="tab" aria-controls="simulation" aria-selected="false">Simulation</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="observation-tab" data-toggle="tab" href="#observation" role="tab" aria-controls="observation" aria-selected="false">Observation</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="result-tab" data-toggle="tab" href="#result" role="tab" aria-controls="result" aria-selected="false">Result</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="references-tab" data-toggle="tab" href="#references" role="tab" aria-controls="references" aria-selected="false">References</a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content mt-4" id="myTabContent">
+
+        <!-- Aim Tab -->
+        <div class="tab-pane fade show active" id="aim" role="tabpanel" aria-labelledby="aim-tab">
+            <h3 class="text-secondary font-weight-bold">Aim</h3>
+            <p>To understand the interference pattern formed by light passing through two slits, and to calculate the fringe width.</p>
+            <img src="{% static 'images/youngs_double_slit_experiment.jpg' %}" class="img-fluid rounded shadow-lg" alt="Young's Double Slit Experiment">
+        </div>
+
+        <!-- Theory Tab -->
+        <div class="tab-pane fade" id="theory" role="tabpanel" aria-labelledby="theory-tab">
+            <h3 class="text-secondary font-weight-bold">Theory</h3>
+            <p>In Young's Double Slit experiment, light passing through two slits creates an interference pattern on a screen. This occurs due to the constructive and destructive interference between the light waves passing through the slits.</p>
+            <img src="{% static 'images/youngs_double_slit_setup.jpg' %}" class="img-fluid rounded shadow-lg" alt="Young's Double Slit Setup">
+            <p>Fringe width formula: <strong>β = λD / d</strong>, where:</p>
+            <ul class="list-unstyled">
+                <li><strong>λ</strong> = Wavelength of light</li>
+                <li><strong>D</strong> = Distance from slits to screen</li>
+                <li><strong>d</strong> = Distance between the slits</li>
+            </ul>
+        </div>
+
+        <!-- Procedure Tab -->
+        <div class="tab-pane fade" id="procedure" role="tabpanel" aria-labelledby="procedure-tab">
+            <h3 class="text-secondary font-weight-bold">Procedure</h3>
+            <ol class="text-muted">
+                <li><strong>Setup the Experiment:</strong> Ensure the virtual lab is loaded with adjustable parameters for wavelength, slit separation, and screen distance.</li>
+                <li><strong>Adjust Wavelength (λ):</strong> Select the desired wavelength using the <strong>Wavelength</strong> slider, ranging from <strong>400 nm</strong> (violet) to <strong>700 nm</strong> (red).</li>
+                <li><strong>Adjust Slit Separation (d):</strong> Use the <strong>Slit Separation</strong> slider to adjust the distance between the slits.</li>
+                <li><strong>Adjust Distance to Screen (D):</strong> Set the distance to the screen using the <strong>Distance to Screen</strong> slider.</li>
+                <li><strong>Observe the Interference Pattern:</strong> After adjusting, observe the interference pattern formed on the virtual screen.</li>
+                <li><strong>Measure Fringe Width (β):</strong> The fringe width is calculated based on the selected parameters, displayed in millimeters.</li>
+                <li><strong>Experiment with Different Values:</strong> Adjust parameters and observe how the fringe pattern changes.</li>
+                <li><strong>Record the Results:</strong> Record the fringe width for each combination of parameters.</li>
+                <li><strong>Analyze and Conclude:</strong> Analyze your observations and compare them with theoretical predictions.</li>
+            </ol>
+        </div>
+
+        <!-- Simulation Tab -->
+        <div class="tab-pane fade" id="simulation" role="tabpanel" aria-labelledby="simulation-tab">
+            <h3 class="text-secondary font-weight-bold">Simulation</h3>
+            <div class="form-group">
+                <label for="lambda" class="font-weight-bold">Wavelength (λ) [nm]:</label>
+                <input type="range" id="lambda" class="form-control-range custom-slider" min="400" max="700" value="600">
+                <span id="lambdaValue">600</span> nm
+            </div>
+
+            <div class="form-group">
+                <label for="d" class="font-weight-bold">Slit Separation (d) [mm]:</label>
+                <input type="range" id="d" class="form-control-range custom-slider" min="0.1" max="2" step="0.01" value="0.5">
+                <span id="dValue">0.5</span> mm
+            </div>
+
+            <div class="form-group">
+                <label for="D" class="font-weight-bold">Distance to Screen (D) [m]:</label>
+                <input type="range" id="D" class="form-control-range custom-slider" min="0.5" max="2" step="0.1" value="1">
+                <span id="DValue">1</span> m
+            </div>
+
+            <canvas id="patternCanvas" width="600" height="300" style="border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);"></canvas>
+            <p><strong>Fringe Width (β):</strong> <span id="fringeWidth">1.200</span> mm</p>
+
+            <script>
+                const canvas = document.getElementById('patternCanvas');
+                const ctx = canvas.getContext('2d');
+
+                const lambdaSlider = document.getElementById('lambda');
+                const dSlider = document.getElementById('d');
+                const DSlider = document.getElementById('D');
+                const lambdaValue = document.getElementById('lambdaValue');
+                const dValue = document.getElementById('dValue');
+                const DValue = document.getElementById('DValue');
+                const fringeWidthDisplay = document.getElementById('fringeWidth');
+
+                function drawPattern() {
+                    const λ = lambdaSlider.value * 1e-9;  
+                    const d = dSlider.value * 1e-3;  
+                    const D = DSlider.value;  
+
+                    lambdaValue.innerText = lambdaSlider.value;
+                    dValue.innerText = dSlider.value;
+                    DValue.innerText = DSlider.value;
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    const centerY = canvas.height / 2;
+
+                    const fringeWidth = (λ * D) / d; 
+                    fringeWidthDisplay.innerText = (fringeWidth * 1e3).toFixed(3); 
+
+                    const numFringes = 30;
+
+                    for (let m = -numFringes; m <= numFringes; m++) {
+                        const yPos = centerY + m * fringeWidth * 1e3; 
+
+                        const intensity = Math.pow(Math.cos(Math.PI * m), 2); 
+                        const brightness = Math.min(255, Math.round(intensity * 255)); 
+
+                        if (m % 2 === 0) {
+                            ctx.fillStyle = `rgb(${brightness}, ${brightness}, 0)`;  
+                        } else {
+                            ctx.fillStyle = `rgb(0, 0, ${brightness})`;  
+                        }
+
+                        ctx.fillRect(0, yPos, canvas.width, 2);  
+                    }
+                }
+
+                lambdaSlider.addEventListener('input', drawPattern);
+                dSlider.addEventListener('input', drawPattern);
+                DSlider.addEventListener('input', drawPattern);
+
+                drawPattern();
+            </script>
+        </div>
+
+        <!-- Observation Tab -->
+        <div class="tab-pane fade" id="observation" role="tabpanel" aria-labelledby="observation-tab">
+            <h3 class="text-secondary font-weight-bold">Observation</h3>
+            <p>As the parameters change, you will observe variations in the interference fringes. Wider wavelengths lead to wider fringes, and closer slit separations lead to more pronounced patterns.</p>
+        </div>
+
+        <!-- Result Tab -->
+        <div class="tab-pane fade" id="result" role="tabpanel" aria-labelledby="result-tab">
+            <h3 class="text-secondary font-weight-bold">Result</h3>
+            <p>The simulated fringe width <strong>β</strong> will match the theoretical results, calculated using the formula <strong>β = λD / d</strong>. This allows you to verify your results.</p>
+        </div>
+
+        <!-- References Tab -->
+<div class="tab-pane fade" id="references" role="tabpanel" aria-labelledby="references-tab">
+    <h3 class="text-dark font-weight-bold">References</h3>
+    <ul class="list-unstyled">
+        <li class="mb-3">
+            <a href="https://www.amazon.com/Optics-Short-Course-Eugene-Hecht/dp/0201525293" target="_blank" 
+               class="text-dark d-flex align-items-center p-2 rounded border border-light shadow-sm" 
+               style="text-decoration: none; transition: all 0.3s ease-in-out;">
+                <i class="fas fa-book mr-2" style="font-size: 1.3rem;"></i>
+                Optics - A Short Course by Eugene Hecht
+            </a>
+        </li>
+        <li>
+            <a href="https://www.feynmanlectures.caltech.edu/" target="_blank" 
+               class="text-dark d-flex align-items-center p-2 rounded border border-light shadow-sm" 
+               style="text-decoration: none; transition: all 0.3s ease-in-out;">
+                <i class="fas fa-book mr-2" style="font-size: 1.3rem;"></i>
+                Feynman Lectures on Physics
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+    </div>
+</div>
+{% endblock %}
