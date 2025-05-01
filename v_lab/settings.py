@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key')  # Best practice for pro
 DEBUG = os.getenv('DEBUG', 'True') == 'True'  # Use environment variable for flexibility
 
 # ✅ Add your Render domain here
-ALLOWED_HOSTS = ['v-lab-1.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['v-lab-3.onrender.com', 'localhost', '127.0.0.1','127.0.0.8000']
 
 # Application definition
 INSTALLED_APPS = [
